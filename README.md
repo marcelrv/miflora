@@ -14,6 +14,7 @@ pip install gattlib
 ```
 
 this requires Bluez 5.37 or higher to be installed as well
+
 To run this as non-root run the following
 ```
 sudo setcap cap_net_raw+eip $(eval readlink -f `which python`)
