@@ -26,7 +26,7 @@ $ crontab -e
 ```
 add the line:
 ```
-*/30 * * * * /usr/bin/python /home/ubuntu/miflower.py
+*/30 * * * * /usr/bin/python /home/ubuntu/miflower.py >/dev/null 2>&1
 ```
 (replace the last part with your file name & path)
 
