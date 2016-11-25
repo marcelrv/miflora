@@ -6,6 +6,7 @@
 # Xiaomi flower protocol & code from https://wiki.hackerspace.pl/projects:xiaomi-flora by emeryth (emeryth at hackerspace.pl)
 # Author Marcel Verpaalen
 
+import sys
 from struct import unpack
 import paho.mqtt.publish as publish
 from gattlib import DiscoveryService, GATTRequester, GATTResponse
@@ -13,12 +14,13 @@ from gattlib import DiscoveryService, GATTRequester, GATTResponse
 verbose = True
 
 service = DiscoveryService("hci0")
-devices = service.discover(5)
+devices = service.discover(15)
 
 baseTopic = "/miflower/"
 msgs=[]
 
 for address, name in list(devices.items()):
+    try:	
 	if (name == "Flower mate"):
 		topic= baseTopic + address.replace(':', '') + '/'
 		requester = GATTRequester(address, True)
@@ -44,5 +46,8 @@ for address, name in list(devices.items()):
 			print "Temperature:",temperature/10.," C"
 			print "Soil moisture:",moisture,"%"
 			print "Soil fertility:",fertility,"uS/cm"
+    except:
+        print "Error during reafing:", sys.exc_info()[0]
+
 if (len(msgs) > 0):
 	publish.multiple(msgs, hostname="localhost", port=1883, client_id="miflower", keepalive=60,will=None, auth=None, tls=None)
