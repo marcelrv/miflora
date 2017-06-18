@@ -2,7 +2,7 @@
 # -*- mode: python; coding: utf-8 -*-
 
 # Scans for and reads data from Xiaomi flower monitor and publish via MQTT
-# Tested on firmware version 2.6.2 &  2.6.6 
+# Tested on firmware version 2.6.2 &  2.6.6 & 2.9.4
 # Xiaomi flower protocol & code from https://wiki.hackerspace.pl/projects:xiaomi-flora by emeryth (emeryth at hackerspace.pl)
 # Author Marcel Verpaalen
 
@@ -21,12 +21,12 @@ msgs=[]
 
 for address, name in list(devices.items()):
     try:	
-	if (name == "Flower mate"):
+	if (name == "Flower mate" or name == "Flower care"):
 		topic= baseTopic + address.replace(':', '') + '/'
 		requester = GATTRequester(address, True)
 		#Read battery and firmware version attribute
 		data=requester.read_by_handle(0x0038)[0]
-		battery, firmware = unpack('<B6s',data)
+		battery, firmware = unpack('<xB5s',data)
 		msgs.append({'topic': topic + 'battery', 'payload':battery})
 		msgs.append({'topic': topic + 'firmware', 'payload':firmware})
 		#Enable real-time data reading
@@ -47,7 +47,7 @@ for address, name in list(devices.items()):
 			print "Soil moisture:",moisture,"%"
 			print "Soil fertility:",fertility,"uS/cm"
     except:
-        print "Error during reafing:", sys.exc_info()[0]
+        print "Error during reading:", sys.exc_info()[0]
 
 if (len(msgs) > 0):
 	publish.multiple(msgs, hostname="localhost", port=1883, client_id="miflower", keepalive=60,will=None, auth=None, tls=None)
