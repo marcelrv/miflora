@@ -4,6 +4,7 @@
 # Scans for and reads data from Xiaomi flower monitor and publish via MQTT
 # Tested on firmware version 2.6.2 &  2.6.6 & 2.9.4
 # Xiaomi flower protocol & code from https://wiki.hackerspace.pl/projects:xiaomi-flora by emeryth (emeryth at hackerspace.pl)
+# NB, change in the last line your mqtt server & authentication details if needed
 # Author Marcel Verpaalen
 
 import sys
@@ -50,4 +51,6 @@ for address, name in list(devices.items()):
         print "Error during reading:", sys.exc_info()[0]
 
 if (len(msgs) > 0):
-	publish.multiple(msgs, hostname="localhost", port=1883, client_id="miflower", keepalive=60,will=None, auth=None, tls=None)
+	#publish.multiple(msgs, hostname="localhost", port=1883, client_id="miflower", keepalive=60,will=None, auth=None, tls=None)
+	for msg in msgs:
+		publish.single(msg['topic'], payload=msg['payload'], hostname="localhost", port=1883, keepalive=60,will=None, auth=None, tls=None)
